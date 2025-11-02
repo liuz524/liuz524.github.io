@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弹窗效果</title>
+    <style>
+        .custom-alert {
+            position: fixed;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #000;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        /* 初始"你好"弹窗增加关闭按钮样式 */
+        .hello-alert {
+            padding: 20px 25px;
+            font-size: 16px;
+        }
+        
+        .close-btn {
+            margin-left: 15px;
+            padding: 3px 8px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function getRandomLightColor() {
+            const r = Math.floor(Math.random() * 56) + 200;
+            const g = Math.floor(Math.random() * 56) + 200;
+            const b = Math.floor(Math.random() * 56) + 200;
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function createCustomAlert(message, color, isHello = false) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `custom-alert ${isHello ? 'hello-alert' : ''}`;
+            alertDiv.style.backgroundColor = color;
+            
+            // 如果是初始弹窗，添加关闭按钮
+            if (isHello) {
+                alertDiv.innerHTML = `${message} <button class="close-btn">关闭</button>`;
+                
+                // 居中显示
+                alertDiv.style.left = '50%';
+                alertDiv.style.top = '50%';
+                alertDiv.style.transform = 'translate(-50%, -50%)';
+                
+                // 关闭按钮事件
+                const closeBtn = alertDiv.querySelector('.close-btn');
+                closeBtn.addEventListener('click', () => {
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(alertDiv);
+                        // 关闭后开始弹出其他弹窗
+                        showSubsequentAlerts();
+                    }, 300);
+                });
+            } else {
+                alertDiv.textContent = message;
+                // 随机位置
+                const maxLeft = window.innerWidth - 120;
+                const maxTop = window.innerHeight - 60;
+                alertDiv.style.left = `${Math.floor(Math.random() * maxLeft)}px`;
+                alertDiv.style.top = `${Math.floor(Math.random() * maxTop)}px`;
+                
+                // 自动关闭
+                setTimeout(() => {
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => document.body.removeChild(alertDiv), 300);
+                }, 2000);
+            }
+            
+            document.body.appendChild(alertDiv);
+        }
+
+        // 显示后续弹窗的函数
+        function showSubsequentAlerts() {
+            const messages = [
+                "你好", "弹窗", "消息", "提示", "问候",
+                "欢迎", "通知", "信息", "对话", "弹窗",
+                "哈喽", "你好呀", "新消息", "提示框", "小窗口",
+                "弹窗啦", "看这里", "注意", "提示信息", "再来一个",
+                "继续", "不停", "好多", "弹窗", "结束"
+            ];
+            
+            // 更密集的弹窗，间隔50ms
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    createCustomAlert(msg, getRandomLightColor());
+                }, index * 50);
+            });
+        }
+
+        // 先显示带关闭按钮的"你好"弹窗
+        createCustomAlert('你好', getRandomLightColor(), true);
+    </script>
+</body>
+</html>
